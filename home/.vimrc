@@ -22,22 +22,22 @@ Plug 'vim-airline/vim-airline'
 Plug 'w0rp/ale'
 
 " Language Support Plugins
-Plug 'davidhalter/jedi-vim'                         " python autocomplete
-Plug 'digitaltoad/vim-pug'                          " pug
-Plug 'elzr/vim-json'                                " json
-Plug 'gisraptor/vim-lilypond-integrator'            " lilypond
-Plug 'google/yapf'                                  " python
-Plug 'kchmck/vim-coffee-script'                     " coffeescript
-Plug 'leafgarland/typescript-vim'                   " typescript
-Plug 'ljfa-ag/minetweaker-highlighting'             " zenscript
-Plug 'maxmellon/vim-jsx-pretty'                     " jsx
-Plug 'pangloss/vim-javascript'                      " javascript
-Plug 'plasticboy/vim-markdown'                      " markdown
-Plug 'posva/vim-vue'                                " vue
-Plug 'slim-template/vim-slim'                       " slim
-Plug 'statianzo/vim-jade'                           " jade
-Plug 'stephpy/vim-yaml'                             " yaml
-Plug 'vim-scripts/mako.vim'                         " mako
+Plug 'davidhalter/jedi-vim'              " python
+Plug 'digitaltoad/vim-pug'               " pug
+Plug 'elzr/vim-json'                     " json
+Plug 'gisraptor/vim-lilypond-integrator' " lilypond
+Plug 'google/yapf'                       " python
+Plug 'kchmck/vim-coffee-script'          " coffeescript
+Plug 'leafgarland/typescript-vim'        " typescript
+Plug 'ljfa-ag/minetweaker-highlighting'  " zenscript
+Plug 'maxmellon/vim-jsx-pretty'          " jsx
+Plug 'pangloss/vim-javascript'           " javascript
+Plug 'plasticboy/vim-markdown'           " markdown
+Plug 'posva/vim-vue'                     " vue
+Plug 'slim-template/vim-slim'            " slim
+Plug 'statianzo/vim-jade'                " jade
+Plug 'stephpy/vim-yaml'                  " yaml
+Plug 'vim-scripts/mako.vim'              " mako
 
 call plug#end()
 
@@ -45,8 +45,6 @@ call plug#end()
 
 set background=dark
 silent! colorscheme gruvbox
-" abra alduin badwolf Benokai birds-of-paradise black-angus brogrammer bvemu cabin camo chlordane coffee corporation
-" dark-robin feral golden greens gruvbox kellys liquidcarbon molokai night_vision obsidian solarized zmrok
 
 filetype plugin indent on
 hi ColorColumn ctermbg=8
@@ -63,6 +61,7 @@ set colorcolumn=100
 set cursorline
 set diffopt=filler,vertical
 set expandtab
+set exrc
 set incsearch
 set laststatus=2
 set list
@@ -78,6 +77,7 @@ set number
 set path=**
 set ruler
 set scrolloff=5
+set secure
 set shiftwidth=4
 set showbreak="+++>"
 set showcmd
@@ -113,10 +113,12 @@ endif
 let g:vim_json_syntax_conceal = 0
 
 " godlygeek/tabular
-nmap == :Tabularize /=<CR>
-nmap =: :Tabularize /[^:]*:<CR>
-nmap =or :Tabularize /or<CR>
-nmap =, :Tabularize /[^,]*:<CR>
+nmap == :'a,.Tab /=/<CR>
+nmap =: :'a,.Tab /:/<CR>
+nmap =or :'a,.Tab /or/<CR>
+nmap =, :'a,.Tab /,/<CR>
+nmap =as :'a,.Tab /as/<CR>
+nmap =import :'a,.Tab /import/<CR>
 
 " nathanaelkane/vim-indent-guides
 let g:indent_guides_enable_on_vim_startup = 0
@@ -159,7 +161,7 @@ let g:ale_linters = {
     \'javascript': ['eslint'],
     \'json': ['jsonlint'],
     \'pug': ['puglint'],
-    \'python': ['pycodestyle', 'pydocstyle', 'pyflakes', 'pyls'],
+    \'python': ['mypy', 'pycodestyle', 'pydocstyle', 'pyflakes', 'pyls'],
     \'typescript': ['eslint', 'tsserver'],
     \'typescriptreact': ['eslint', 'tsserver'],
     \'vue': ['vls']
@@ -169,11 +171,10 @@ let g:ale_virtualenv_dir_names = ['usr']
 
 " Key Mappings #########################################################################################################
 
-map <F1>  :NERDTreeToggle<CR>
+map <F1>  :NERDTreeToggle \| wincmd p \| vertical resize 107 \| wincmd p<CR>
 map <F2>  :NERDTreeFind<CR>
 map <F3>  :'a,.!sort -fg<CR>
 map <F4>  :IndentGuidesToggle<CR>
-map <F5>  :e!<CR>
 map <F6>  :set hlsearch!<CR>
 map <F7>  :cp<CR>
 map <F8>  :copen<CR>
@@ -181,6 +182,13 @@ map <F9>  :cn<CR>
 map <F10> :ALEFindReferences<CR>
 map <F11> :ALEGoToDefinition<CR>
 map <F12> :ALEGoToTypeDefinition<CR>
+
+" Toggle between file.py and file_test.py
+nnoremap <F5> :if expand('%:t') =~# '_test\.py$' \|
+      \ execute 'edit ' . substitute(expand('%'), '_test\.py$', '.py', '') \|
+      \ else \|
+      \ execute 'edit ' . expand('%:r') . '_test.py' \|
+      \ endif<CR>
 
 nmap '    :BufExplorer<CR>
 
@@ -197,4 +205,10 @@ autocmd BufRead *.mako set syntax=mako
 autocmd BufRead *.go set noexpandtab
 autocmd BufRead *.go set listchars=tab:\ \ ,
 autocmd BufRead *.jin set syntax=jinja
+autocmd BufRead *.scss set shiftwidth=4
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" Startup Commands #################################################################################
+
+autocmd VimEnter * NERDTree | wincmd p | vertical resize 107
+autocmd CursorHold,FocusLost * silent! wall

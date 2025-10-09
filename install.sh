@@ -25,6 +25,7 @@ USAGE: $0 <package>|all
     python          install Python language tools
     ruby            install Ruby language tools
     typescript      install TypeScript language tools
+    vim             install VIM and plugins
     webtools        install tools for web development
 END
 )

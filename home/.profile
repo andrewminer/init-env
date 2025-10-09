@@ -14,6 +14,9 @@ alias mux='tmuxinator'
 # Machine-Specific Configuration
 [[ -e "$HOME/.profile.local" ]] && source $HOME/.profile.local
 
+# Brew Config
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Git Config
 source ~/bin/git-completion.sh
 
@@ -38,7 +41,11 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 export PYTHONSTARTUP="$(python -m jedi repl)"
+export PYTHONPYCACHEPREFIX=$HOME/.pycache/
 
 # Ruby Config
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-export PATH=$PATH:$HOME/.rvm/bin
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+#export PATH=$PATH:$HOME/.rvm/bin
+#source /usr/local/opt/chruby/share/chruby/chruby.sh
+#source /usr/local/opt/chruby/share/chruby/auto.sh
+#chruby ruby-3.1.3
