@@ -1,4 +1,4 @@
-" Install Plugged ######################################################################################################
+" Install Plugged ##################################################################################
 
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -6,7 +6,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source ~/.vimrc
 endif
 
-" Install Plugins ######################################################################################################
+" Install Plugins ##################################################################################
 
 call plug#begin('~/.vim/plugged')
 
@@ -19,10 +19,11 @@ Plug 'nathanaelkane/vim-indent-guides'
 Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
+Plug 'vim-scripts/auto_autoread.vim'
 Plug 'w0rp/ale'
 
 " Language Support Plugins
-Plug 'davidhalter/jedi-vim'              " python
+"Plug 'davidhalter/jedi-vim'              " python
 Plug 'digitaltoad/vim-pug'               " pug
 Plug 'elzr/vim-json'                     " json
 Plug 'gisraptor/vim-lilypond-integrator' " lilypond
@@ -32,7 +33,7 @@ Plug 'leafgarland/typescript-vim'        " typescript
 Plug 'ljfa-ag/minetweaker-highlighting'  " zenscript
 Plug 'maxmellon/vim-jsx-pretty'          " jsx
 Plug 'pangloss/vim-javascript'           " javascript
-Plug 'plasticboy/vim-markdown'           " markdown
+Plug 'gabrielelana/vim-markdown'         " markdown
 Plug 'posva/vim-vue'                     " vue
 Plug 'slim-template/vim-slim'            " slim
 Plug 'statianzo/vim-jade'                " jade
@@ -41,7 +42,7 @@ Plug 'vim-scripts/mako.vim'              " mako
 
 call plug#end()
 
-" Execute Basic Setup Commands #########################################################################################
+" Execute Basic Setup Commands #####################################################################
 
 set background=dark
 silent! colorscheme gruvbox
@@ -50,7 +51,7 @@ filetype plugin indent on
 hi ColorColumn ctermbg=8
 syntax on
 
-" Configure Settings ###################################################################################################
+" Configure Settings ###############################################################################
 
 set autoindent
 set autowrite
@@ -79,12 +80,12 @@ set ruler
 set scrolloff=5
 set secure
 set shiftwidth=4
-set showbreak="+++>"
+set showbreak=+++>
 set showcmd
 set showmatch
+set signcolumn=yes
 set smarttab
 set statusline=%<%f\ %h%m%r%*%=%-14.(%l,%c%V%)\ %P
-set t_Co=256
 set tabstop=4
 set textwidth=100
 set virtualedit=block
@@ -99,7 +100,9 @@ endif
 
 autocmd BufWritePre * %s/\s\+$//e
 
-" Configure Plugins ####################################################################################################
+" Configure Plugins ################################################################################
+
+let g:is_bash = 1
 
 " ctrlpvim/ctrlp.vim
 let g:ctrlp_working_path_mode = 0
@@ -139,11 +142,17 @@ let g:airline#extensions#ale#enabled = 1
 " w0rp/ale
 let g:ale_completion_delay = 500
 let g:ale_completion_enabled = 1
+let g:ale_echo_cursor = 1
+let g:ale_echo_msg_detail = 2
+let g:ale_echo_msg_format = '%linter%|%severity%: %s'
+let g:ale_maximum_message_length = 200
 let g:ale_fix_on_save = 1
-let g:ale_lint_on_text_changed = 'never'
+let g:ale_hover_cursor = 1
+let g:ale_lint_on_text_changed = 'always'
 let g:ale_open_list = 1
 let g:ale_set_loclist = 0
 let g:ale_sign_column_always = 1
+let g:ale_virtualenv_dir_names = ['.venv']
 
 let g:ale_fixers = {
     \'*': ['remove_trailing_lines', 'trim_whitespace'],
@@ -161,54 +170,102 @@ let g:ale_linters = {
     \'javascript': ['eslint'],
     \'json': ['jsonlint'],
     \'pug': ['puglint'],
-    \'python': ['mypy', 'pycodestyle', 'pydocstyle', 'pyflakes', 'pyls'],
+    \'python': ['pyright', 'mypy'],
     \'typescript': ['eslint', 'tsserver'],
     \'typescriptreact': ['eslint', 'tsserver'],
     \'vue': ['vls']
     \}
 
-let g:ale_virtualenv_dir_names = ['usr']
+let g:ale_python_mypy_options =
+    \ '--python-version 3.13 ' .
+    \ '--check-untyped-defs ' .
+    \ '--show-error-codes '
 
-" Key Mappings #########################################################################################################
 
-map <F1>  :NERDTreeToggle \| wincmd p \| vertical resize 107 \| wincmd p<CR>
-map <F2>  :NERDTreeFind<CR>
-map <F3>  :'a,.!sort -fg<CR>
-map <F4>  :IndentGuidesToggle<CR>
-map <F6>  :set hlsearch!<CR>
-map <F7>  :cp<CR>
-map <F8>  :copen<CR>
-map <F9>  :cn<CR>
-map <F10> :ALEFindReferences<CR>
-map <F11> :ALEGoToDefinition<CR>
-map <F12> :ALEGoToTypeDefinition<CR>
+" Functions ########################################################################################
+
+function! InsertDivider()
+  " Use filetype's commentstring or default to '# %s'
+  let cs = &commentstring !=# '' ? &commentstring : '# %s'
+
+  " Extract leader (up to %s) and trim trailing spaces
+  let leader = substitute(cs, '%s.*', '', '')
+  let leader = substitute(leader, '\s*$', '', '')
+
+  " Determine fill character (last non-space char of leader)
+  let fillchar = matchstr(leader, '.$')
+
+  " Determine total width (use textwidth or fallback to 80)
+  let width = (&textwidth > 0 ? &textwidth : 80)
+
+  " Capture indentation and its column width
+  let indent = matchstr(getline('.'), '^\s*')
+  let indentwidth = len(indent)
+
+  " If indented, leave 20 characters to spare
+  let effective_width = indentwidth > 0 ? width - 20 : width
+  if effective_width < (len(leader) + 1)
+    let effective_width = len(leader) + 1
+  endif
+
+  " Construct full divider line
+  let line = indent . repeat(fillchar, effective_width - indentwidth)
+
+  " Insert the line below current one
+  call append('.', line)
+
+  " Move to the inserted line, after the leader
+  normal! j0
+  call cursor(line('.'), len(indent) + len(leader) + 1)
+endfunction
+
+
+" Key Mappings #####################################################################################
+
+nnoremap <F1>  :NERDTreeToggle \| wincmd p \| vertical resize 107 \| wincmd p<CR>
+nnoremap <F2>  :NERDTreeFind<CR>
+nnoremap <F3>  :'a,.!sort -fg<CR>
+nnoremap <F4>  :IndentGuidesToggle<CR>
+nnoremap <F5>  :call InsertDivider()<CR>
+inoremap <F5>  <Esc>:call InsertDivider()<CR>
+nnoremap <F6>  :set hlsearch!<CR>
+nnoremap <F7>  :cp<CR>
+nnoremap <F9>  :cn<CR>
+nnoremap <F10> :copen<CR>
+
+nnoremap <Leader>c :ALEGoToTypeDefinition<CR>
+nnoremap <Leader>d :ALEGoToDefinition<CR>
+nnoremap <Leader>e :ALEDetail<CR>
+nnoremap <Leader>h :ALEHover<CR>
+nnoremap <Leader>n :ALENext<CR>
+nnoremap <Leader>p :ALEPrevious<CR>
+nnoremap <Leader>r :ALEFindReferences<CR>
+nnoremap <Leader>x :ALEToggle<CR>
 
 " Toggle between file.py and file_test.py
-nnoremap <F5> :if expand('%:t') =~# '_test\.py$' \|
+nnoremap <Leader>t :if expand('%:t') =~# '_test\.py$' \|
       \ execute 'edit ' . substitute(expand('%'), '_test\.py$', '.py', '') \|
       \ else \|
       \ execute 'edit ' . expand('%:r') . '_test.py' \|
       \ endif<CR>
 
-nmap '    :BufExplorer<CR>
+nnoremap '    :BufExplorer<CR>
 
-" Local Overrides ######################################################################################################
+" Local Overrides ##################################################################################
 
 silent! source $HOME/.vimrc.local    " user or machine specific .vimrc
 silent! source .vimrc.local          " project specific .vimrc
 
-" File-Type Specific Settings ##########################################################################################
+" File-Type Specific Settings ######################################################################
 
 autocmd BufRead COMMIT_EDITMSG set textwidth=70 colorcolumn=70
 autocmd BufRead Makefile setlocal noexpandtab
-autocmd BufRead *.mako set syntax=mako
-autocmd BufRead *.go set noexpandtab
-autocmd BufRead *.go set listchars=tab:\ \ ,
-autocmd BufRead *.jin set syntax=jinja
+autocmd BufRead *.md set textwidth=100
 autocmd BufRead *.scss set shiftwidth=4
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " Startup Commands #################################################################################
 
-autocmd VimEnter * NERDTree | wincmd p | vertical resize 107
+autocmd VimEnter * if argc() == 0 | NERDTree | wincmd p | vertical resize 107
 autocmd CursorHold,FocusLost * silent! wall
+autocmd FileType qf execute "resize " . float2nr(&lines * 1 / 3)

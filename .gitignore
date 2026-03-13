@@ -1,5 +1,7 @@
 *.swp
 .DS_Store
 home/.config/configstore/*
+home/.config/git/*
 home/.vim/plugged
+home/.vim/spell/*
 plug.vim.old

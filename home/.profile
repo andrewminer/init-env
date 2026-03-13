@@ -11,6 +11,10 @@ alias clear='clear && printf "\e[3J"'
 alias tmux='TERM=xterm-256color /usr/local/bin/tmux'
 alias mux='tmuxinator'
 
+# Claude
+
+export PATH=~/.local/bin/:$PATH
+
 # Machine-Specific Configuration
 [[ -e "$HOME/.profile.local" ]] && source $HOME/.profile.local
 
@@ -23,17 +27,15 @@ source ~/bin/git-completion.sh
 # Java Config
 export PATH="/usr/local/opt/openjdk@11/bin:$PATH"
 
-# Go Config
-export GOPATH=/src/go
-export GOBIN=/src/go/bin
-export PATH=$PATH:$GOBIN
-
 # NodeJS Config
 export PATH=$PATH:$HOME/node_modules/.bin
 export NVM_DIR="$HOME/.nvm"
 mkdir -p $NVM_DIR &>/dev/null
 [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
 [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+
+# PostgreSQL Config
+export PATH=/opt/homebrew/opt/postgresql@16/bin:$PATH
 
 # Python Config
 export PYENV_ROOT="$HOME/.pyenv"
@@ -42,10 +44,3 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 export PYTHONSTARTUP="$(python -m jedi repl)"
 export PYTHONPYCACHEPREFIX=$HOME/.pycache/
-
-# Ruby Config
-#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-#export PATH=$PATH:$HOME/.rvm/bin
-#source /usr/local/opt/chruby/share/chruby/chruby.sh
-#source /usr/local/opt/chruby/share/chruby/auto.sh
-#chruby ruby-3.1.3
