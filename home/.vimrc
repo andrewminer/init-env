@@ -33,7 +33,7 @@ Plug 'leafgarland/typescript-vim'        " typescript
 Plug 'ljfa-ag/minetweaker-highlighting'  " zenscript
 Plug 'maxmellon/vim-jsx-pretty'          " jsx
 Plug 'pangloss/vim-javascript'           " javascript
-Plug 'gabrielelana/vim-markdown'         " markdown
+Plug 'hughbien/md-vim'                   " markdown
 Plug 'posva/vim-vue'                     " vue
 Plug 'slim-template/vim-slim'            " slim
 Plug 'statianzo/vim-jade'                " jade
@@ -222,7 +222,7 @@ endfunction
 
 " Key Mappings #####################################################################################
 
-nnoremap <F1>  :NERDTreeToggle \| wincmd p \| vertical resize 107 \| wincmd p<CR>
+nnoremap <F1>  :NERDTreeToggle \| wincmd p \| vertical resize 111 \| wincmd p<CR>
 nnoremap <F2>  :NERDTreeFind<CR>
 nnoremap <F3>  :'a,.!sort -fg<CR>
 nnoremap <F4>  :IndentGuidesToggle<CR>
@@ -266,6 +266,6 @@ autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " Startup Commands #################################################################################
 
-autocmd VimEnter * if argc() == 0 | NERDTree | wincmd p | vertical resize 107
+autocmd VimEnter * if argc() == 0 | NERDTree | wincmd p | vertical resize 111
 autocmd CursorHold,FocusLost * silent! wall
 autocmd FileType qf execute "resize " . float2nr(&lines * 1 / 3)
