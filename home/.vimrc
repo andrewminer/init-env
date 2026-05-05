@@ -79,6 +79,7 @@ set path=**
 set ruler
 set scrolloff=5
 set secure
+set shell=/bin/bash\ --login
 set shiftwidth=4
 set showbreak=+++>
 set showcmd
