@@ -243,13 +243,6 @@ nnoremap <Leader>p :ALEPrevious<CR>
 nnoremap <Leader>r :ALEFindReferences<CR>
 nnoremap <Leader>x :ALEToggle<CR>
 
-" Toggle between file.py and file_test.py
-nnoremap <Leader>t :if expand('%:t') =~# '_test\.py$' \|
-      \ execute 'edit ' . substitute(expand('%'), '_test\.py$', '.py', '') \|
-      \ else \|
-      \ execute 'edit ' . expand('%:r') . '_test.py' \|
-      \ endif<CR>
-
 nnoremap '    :BufExplorer<CR>
 
 " Local Overrides ##################################################################################
@@ -261,7 +254,7 @@ silent! source .vimrc.local          " project specific .vimrc
 
 autocmd BufRead COMMIT_EDITMSG set textwidth=70 colorcolumn=70
 autocmd BufRead Makefile setlocal noexpandtab
-autocmd BufRead *.md set textwidth=100
+autocmd BufRead *.md set textwidth=100 shiftwidth=2
 autocmd BufRead *.scss set shiftwidth=4
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
