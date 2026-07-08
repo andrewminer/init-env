@@ -65,6 +65,7 @@ set expandtab
 set exrc
 set incsearch
 set laststatus=2
+set linebreak
 set list
 set listchars=tab:>-
 set modelines=2
@@ -81,7 +82,7 @@ set scrolloff=5
 set secure
 set shell=/bin/bash\ --login
 set shiftwidth=4
-set showbreak=+++>
+set showbreak=
 set showcmd
 set showmatch
 set signcolumn=yes
@@ -245,6 +246,9 @@ nnoremap <Leader>x :ALEToggle<CR>
 
 nnoremap '    :BufExplorer<CR>
 
+nnoremap j gj
+nnoremap k gk
+
 " Local Overrides ##################################################################################
 
 silent! source $HOME/.vimrc.local    " user or machine specific .vimrc
@@ -254,8 +258,8 @@ silent! source .vimrc.local          " project specific .vimrc
 
 autocmd BufRead COMMIT_EDITMSG set textwidth=70 colorcolumn=70
 autocmd BufRead Makefile setlocal noexpandtab
-autocmd BufRead *.md set textwidth=100 shiftwidth=2
 autocmd BufRead *.scss set shiftwidth=4
+autocmd BufRead *.md set wrap textwidth=0
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " Startup Commands #################################################################################
