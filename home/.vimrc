@@ -16,6 +16,7 @@ Plug 'flazz/vim-colorschemes'
 Plug 'godlygeek/tabular'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'nathanaelkane/vim-indent-guides'
+Plug 'rickhowe/wrapwidth'
 Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
@@ -259,7 +260,7 @@ silent! source .vimrc.local          " project specific .vimrc
 autocmd BufRead COMMIT_EDITMSG set textwidth=70 colorcolumn=70
 autocmd BufRead Makefile setlocal noexpandtab
 autocmd BufRead *.scss set shiftwidth=4
-autocmd BufNewFile,BufRead *.md set wrap textwidth=0
+autocmd BufNewFile,BufRead *.md Wrapwidth 100 | set wrap textwidth=0
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " Startup Commands #################################################################################
